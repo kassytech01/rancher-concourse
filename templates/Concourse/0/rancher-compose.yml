@@ -1,0 +1,47 @@
+version: '2'
+catalog:
+  name: Concourse
+  version: 3.12.0
+  description: Concourse is an open-source continuous thing-doer.
+  questions:
+    - variable: db_user
+      label: Concourse DB user
+      description: Concourse DB user
+      default: concourse_db_user
+      required: true
+      type: string
+
+    - variable: db_pass
+      label: Concourse DB password
+      description: Concourse DB password
+      default: concourse_db_pass
+      required: true
+      type: password
+
+    - variable: concourse_user
+      label: Concourse user
+      description: Concourse user
+      default: conchang
+      required: true
+      type: string
+
+    - variable: concourse_pass
+      label: Concourse password
+      description: Concourse password
+      default: conchang
+      required: true
+      type: password
+
+    - variable: concourse_ip
+      label: Concourse External IP
+      description: Concourse External IP
+      default: 192.168.100.100
+      required: true
+      type: string
+
+    - variable: concourse_port
+      label: Concourse External Port
+      description: Concourse External Port
+      default: 8888
+      required: true
+      type: int

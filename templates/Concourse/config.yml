@@ -1,0 +1,7 @@
+name: Concourse
+description: Concourse is an open-source continuous thing-doer.
+version: 3.12.0
+category: Continuous Integration
+maintainer: concourse project
+license: Apache License 2.0
+projectURL: https://concourse-ci.org/

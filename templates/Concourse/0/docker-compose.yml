@@ -1,0 +1,69 @@
+version: '2'
+
+services:
+  concourse-db:
+    labels:
+      io.rancher.container.hostname_override: container_name
+    image: postgres
+    environment:
+    - POSTGRES_DB=concourse
+    - POSTGRES_USER=${db_user}
+    - POSTGRES_PASSWORD=${db_pass}
+    - PGDATA=/database
+
+  concourse-key-generator:
+    labels:
+      io.rancher.container.hostname_override: container_name
+      io.rancher.container.start_once: true
+    image: alpine
+    volumes:
+    - /tmp:/tmp
+    command: >
+      sh -c "
+        apk add --no-cache openssh &&
+        mkdir -p /tmp/keys/web /tmp/key/worker &&
+        yes | ssh-keygen -t rsa -f /tmp/keys/web/tsa_host_key -N '' &&
+        yes | ssh-keygen -t rsa -f /tmp/keys/web/session_signing_key -N '' &&
+        yes | ssh-keygen -t rsa -f /tmp/keys/worker/worker_key -N '' &&
+        cp /tmp/keys/worker/worker_key.pub /tmp/keys/web/authorized_worker_keys &&
+        cp /tmp/keys/web/tsa_host_key.pub /tmp/keys/worker
+      "
+
+  concourse-web:
+    labels:
+      io.rancher.container.hostname_override: container_name
+      io.rancher.sidekicks: concourse-key-generator
+    image: concourse/concourse:3.12.0
+    command: web
+    links:
+    - concourse-db
+    depends_on:
+    - concourse-db
+    ports:
+    - ${concourse_port}:8080
+    volumes:
+    - /tmp/keys/web:/concourse-keys
+    environment:
+    - CONCOURSE_POSTGRES_HOST=concourse-db
+    - CONCOURSE_POSTGRES_USER=${db_user}
+    - CONCOURSE_POSTGRES_PASSWORD=${db_pass}
+    - CONCOURSE_POSTGRES_DATABASE=concourse
+    - CONCOURSE_EXTERNAL_URL=http://${concourse_ip}:${concourse_port}
+    - CONCOURSE_BASIC_AUTH_USERNAME=${concourse_user}
+    - CONCOURSE_BASIC_AUTH_PASSWORD=${concourse_pass}
+
+  concourse-worker:
+    labels:
+      io.rancher.container.hostname_override: container_name
+    image: concourse/concourse:3.12.0
+    command: worker
+    privileged: true
+    links:
+    - concourse-web
+    depends_on:
+    - concourse-web
+    volumes:
+    - /tmp/keys/worker:/concourse-keys
+    environment:
+    - CONCOURSE_TSA_HOST=concourse-web:2222
+    - CONCOURSE_GARDEN_NETWORK
