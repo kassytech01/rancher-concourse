@@ -28,6 +28,10 @@ services:
         cp /tmp/keys/worker/worker_key.pub /tmp/keys/web/authorized_worker_keys &&
         cp /tmp/keys/web/tsa_host_key.pub /tmp/keys/worker
       "
+    environment:
+    - HTTP_PROXY=http://proxys.nikkeibp.co.jp:80
+    - HTTPS_PROXY=http://proxys.nikkeibp.co.jp:80
+    - NO_PROXY=127.0.0.1,localhost,.bpaws.local,169.254.169.254,s3.ap-northeast-1.amazonaws.com,s3-ap-northeast-1.amazonaws.com,s3.dualstack.ap-northeast-1.amazonaws.com
 
   concourse-web:
     labels:
@@ -51,6 +55,9 @@ services:
     - CONCOURSE_EXTERNAL_URL=http://${concourse_ip}:${concourse_port}
     - CONCOURSE_BASIC_AUTH_USERNAME=${concourse_user}
     - CONCOURSE_BASIC_AUTH_PASSWORD=${concourse_pass}
+    - HTTP_PROXY=http://proxys.nikkeibp.co.jp:80
+    - HTTPS_PROXY=http://proxys.nikkeibp.co.jp:80
+    - NO_PROXY=127.0.0.1,localhost,.bpaws.local,169.254.169.254,s3.ap-northeast-1.amazonaws.com,s3-ap-northeast-1.amazonaws.com,s3.dualstack.ap-northeast-1.amazonaws.com
 
   concourse-worker:
     labels:
@@ -67,3 +74,6 @@ services:
     environment:
     - CONCOURSE_TSA_HOST=concourse-web:2222
     - CONCOURSE_GARDEN_NETWORK
+    - HTTP_PROXY=http://proxys.nikkeibp.co.jp:80
+    - HTTPS_PROXY=http://proxys.nikkeibp.co.jp:80
+    - NO_PROXY=127.0.0.1,localhost,.bpaws.local,169.254.169.254,s3.ap-northeast-1.amazonaws.com,s3-ap-northeast-1.amazonaws.com,s3.dualstack.ap-northeast-1.amazonaws.com
