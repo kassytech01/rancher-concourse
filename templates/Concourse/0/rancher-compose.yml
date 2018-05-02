@@ -21,27 +21,27 @@ catalog:
     - variable: concourse_user
       label: Concourse user
       description: Concourse user
-      default: conchang
+      default: concourse
       required: true
       type: string
 
     - variable: concourse_pass
       label: Concourse password
       description: Concourse password
-      default: conchang
+      default: concourse
       required: true
       type: password
 
     - variable: concourse_ip
       label: Concourse External IP
       description: Concourse External IP
-      default: 192.168.100.100
+      default: 172.21.200.20
       required: true
       type: string
 
     - variable: concourse_port
       label: Concourse External Port
       description: Concourse External Port
-      default: 8888
+      default: 8081
       required: true
       type: int
